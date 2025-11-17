@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<head>
+<title>Nerdle</title>
+<link rel="icon" href="/wordlenot.jpg">
+<style type="text/css">
+    
+*{
+    font-family: 'Courier New', monospace;
+    touch-action: manipulation;
+    user-select: none;
+    
+}
+
+body{
+    background-color: rgb(24, 24, 24);
+    overflow: hidden;
+}
+
+#MainBody {
+    
+    position: absolute;
+    top: 5%;
+    color: white; 
+    font-size: 7vh; 
+    text-align: center;
+    left: 50%;
+
+    
+    
+
+}
+
+.yellow{
+    background-color: rgb(170, 170, 0);
+    animation: flipy 0.5s 1;
+    
+    
+}
+.green{
+    background-color: #007c15;
+    animation: flipg 0.5s 1;
+    
+}
+@keyframes fadein{
+    0%{
+        opacity: 0%;
+    }
+    25%{
+        opacity: 25%;
+    }
+    50%{
+        opacity: 50%;
+       
+    }
+    75%{
+        opacity: 100%;
+    }
+}
+@keyframes flipg {
+    25%{
+        transform: rotateX(180deg);
+        box-shadow: 0 0 200px #007c15;
+    }
+    50%{
+        transform:  rotateY(180deg);
+       
+    }
+    75%{
+        transform:  rotateY(180deg);
+    }
+}
+@keyframes flipy {
+    25%{
+        transform: rotateX(180deg);
+        box-shadow: 0 0 200px #c8ff00;
+    }
+    50%{
+        transform:  rotateY(180deg);
+       
+    }
+    75%{
+        transform:  rotateY(180deg);
+    }
+}
+.animate{
+    animation: flipy 1s infinite;
+}
+#keyboard{
+    top: 70%;
+    position: absolute;
+    left: -30%;
+    
+   
+}
+#keyboard *{
+    color: black;
+    font-weight: bold;
+    text-align: center;
+    font-size: 30px;
+    padding: -10px;
+    margin-right: -20px;
+}
+
+
+
+.row_three{
+    margin-top: 2px;
+    top:85%;
+    position: absolute;
+    left: -20%;
+}
+.row_one *{
+    text-align: center;
+    
+    width: 90px;
+    height: 95px;
+}
+.row_two *{
+    text-align: center;
+    width: 90px;
+    height: 95px;
+}
+.row_three *{
+    text-align: center;
+    font-size: 30px;
+    color: black;
+    font-weight: bold;
+    width: 90px;
+    height: 95px;
+    margin-right: -10px;
+
+    
+}
+
+.row_one *:not(.green,.yellow,.grey){
+    background-color: rgb(141, 141, 141);
+}
+.row_two *:not(.green,.yellow,.grey){
+    background-color: rgb(141, 141, 141);
+}
+.row_three *:not(.green,.yellow,.grey){
+    
+    background-color: rgb(141, 141, 141);
+}
+.grey{
+background-color: rgb(56, 56, 56);
+}
+#thing *{
+    position: relative;
+}
+#thing{
+    top: 60%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-250px);
+}
+#pregame *:not(#title){
+    position:relative;
+    
+    margin-top: 20px;
+    font-weight: bold;
+}
+.hidden{
+    opacity: 0%;
+}
+.shown{
+    transition: 1s;
+    opacity: 100%;
+    
+}
+#Start{
+    color: black;
+    position:absolute;
+    left: 0%;
+    top: 25vh;
+    width:16vw;
+    height:16vw;
+    left: 50%;
+    transform: translateX(-8vw);
+    background-color:#007c15;
+    font-size: 3vw;
+}
+#pick{
+    font-size: 7vw;
+    color: black;
+    background-color:#007c15;
+    position:absolute;
+    
+    top: 10vh;
+    font-size: larger;
+    height: auto;
+    width:40vw;
+    height: auto;
+    
+    
+}
+#popup *{
+    word-break: break-all;
+
+    max-width: 340px;
+}
+.shake{
+    animation: shakeanim 1s;
+}
+@keyframes shakeanim {
+    0%{
+        transform: translateX(-10px);
+    }
+    50%{
+        transform: translateX(10px);
+    }
+    
+}
+</style>
+</head>
+
+<body>
+    <div id="possibleanswers" style="width: 20%; height: 50%; background-color: rgb(0, 0, 0); position: absolute; left: 0%; top: 0%;z-index: 2;">
+    <p id="answers" style="max-width: 300px; width: 300px; color: white;">Answers:</p>
+    </div>
+    
+    <div id="popup2" style="width: 100%; height: 100%; background-color: rgb(0, 0, 0); position: absolute; left: 0%; top: 0%;z-index: 2; opacity: 60%; display: none;"> </div>
+    <div id="popup" style="max-width: 340px; animation: fadein 0.5s; width: 340px; height: 600px; background-color: rgb(78, 78, 78); position: absolute; left: 40%; top: 7%;z-index: 10; display: none;">
+        
+
+        <p style="position: relative; left: 100px; font-weight: bolder; font-size: larger;">The word was:</p>
+        <p id="endword" style="position: relative; left: 100px; font-weight: bolder; font-size: larger; top: 0px;">text</p>
+        <p style="position: relative; left: 100px; font-weight: bolder; font-size: larger;">Your scores are:</p>
+        <p id="score" style="position: relative; left: 100px; font-weight: bolder; font-size: larger; top: 0px; max-width: 200px; display: block; width: 100%;">text</p>
+        <button id="share" onclick="share()" style="position: relative; left: 100px; font-weight: bolder; font-size: larger; top: 0px; background-color: #00a51b;">Share -></button>
+        <button id="restart" onclick="restart()" style="height: 70px; width: 140px; position: relative; left: -20px;top: 200px; font-weight: bolder; font-size: larger;  background-color: #00a51b;">Restart</button>
+
+    </div>
+    <div id="alert" style="transition: 1s; position: absolute; left: 45%; top: 10%; display: none; background-color: black; opacity: 70%; color: white; z-index: 15;">
+        Copied to clipboard
+    </div>
+        <div id="list" style="color: transparent; display: none;">
+
+        </div>
+
+<div id="StarWarsList" style="color: transparent; display: none;">
+luke,
+kylo,
+blast,
+raye,
+force,
+yoda,
+trooper,
+</div>
+<div id="NarutoList" style="color: transparent; display: none;">
+dojutsu,
+kekkei,
+jutsu,
+itachi,
+mangekyo,
+byakugan,
+chakra,
+</div>
+<div id="MarvelList" style="color: transparent; display: none;">
+ironman,
+spider,
+hulk,
+hawkeye,
+doom,
+viktor,
+</div>
+<div id="PokemonList" style="color: transparent; display: none;">
+pikachu,
+arceus,
+mewtwo,
+eevee,
+gengar,
+mew,
+celebi,
+char,
+choice,
+potion,
+</div>
+<div id="DragonBallList" style="color: transparent; display: none;">
+flash,
+goku,
+kayoken,
+vegeta,
+shenron,
+sayian,
+ultra,
+ki,
+</div>
+<div id="RegularList" style="color: transparent; display: none;">
+Abuse,
+Adult,
+Agent,
+Anger,
+Apple,
+Award,
+Basis,
+Beach,
+Birth,
+Block,
+Blood,
+Board,
+Brain,
+Bread,
+Break,
+Brown,
+Buyer,
+Cause,
+Chain,
+Chair,
+Chest,
+Chief,
+Child,
+China,
+Claim,
+Class,
+Clock,
+Coach,
+Coast,
+Court,
+Cover,
+Cream,
+Crime,
+Cross,
+Crowd,
+Crown,
+Cycle,
+Dance,
+Death,
+Depth,
+Doubt,
+Draft,
+Drama,
+Dream,
+Dress,
+Drink,
+Drive,
+Earth,
+Enemy,
+Entry,
+Error,
+Event,
+Faith,
+Fault,
+Field,
+Fight,
+Final,
+Floor,
+Focus,
+Force,
+Frame,
+Frank,
+Front,
+Fruit,
+Glass,
+Grant,
+Grass,
+Green,
+Group,
+Guide,
+Heart,
+Henry,
+Horse,
+Hotel,
+House,
+Image,
+Index,
+Input,
+Issue,
+Japan,
+Jones,
+Judge,
+Knife,
+Laura,
+Layer,
+Level,
+Lewis,
+Light,
+Limit,
+Lunch,
+Major,
+March,
+Match,
+Metal,
+Model,
+Money,
+Month,
+Motor,
+Mouth,
+Music,
+Night,
+Noise,
+North,
+Novel,
+Nurse,
+Offer,
+Order,
+Other,
+Owner,
+Panel,
+Paper,
+Party,
+Peace,
+Peter,
+Phase,
+Phone,
+Piece,
+Pilot,
+Pitch,
+Place,
+Plane,
+Plant,
+Plate,
+Point,
+Pound,
+Power,
+Press,
+Price,
+Pride,
+Prize,
+Proof,
+Queen,
+Radio,
+Range,
+Ratio,
+Reply,
+Right,
+River,
+Round,
+Route,
+Rugby,
+Scale,
+Scene,
+Scope,
+Score,
+Sense,
+Shape,
+Share,
+Sheep,
+Sheet,
+Shift,
+Shirt,
+Shock,
+Sight,
+Simon,
+Skill,
+Sleep,
+Smile,
+Smith,
+Smoke,
+Sound,
+South,
+Space,
+Speed,
+Spite,
+Sport,
+Squad,
+Staff,
+Stage,
+Penis,
+Fucks,
+Crane,
+Adieu,
+Start,
+State,
+Steam,
+Steel,
+Stock,
+Stone,
+Store,
+Study,
+Stuff,
+Style,
+Sugar,
+Table,
+Taste,
+Terry,
+Theme,
+Thing,
+Title,
+Total,
+Touch,
+Tower,
+Track,
+Trade,
+Train,
+Trend,
+Trial,
+Trust,
+Truth,
+Uncle,
+Union,
+Unity,
+Value,
+Video,
+Visit,
+Voice,
+Waste,
+Watch,
+Water,
+While,
+White,
+Whole,
+Woman,
+World,
+Youth,
+    </div>
+<div id="list">
+
+</div>
+<div id="pregame" style="animation: fadein 0.5s; width: 70%; height: 70%; background-color: rgb(78, 78, 78); position: absolute; left: 50%; top: 7%;z-index: 10; transform: translateX(-50%);">
+    
+    <label for="Picks">Pick your wordsets:</label>
+
+<select name="Picks" id="pick">
+    <option value="Regular">Regular Wordle</option>
+  <option value="Marvel">Marvel</option>
+  <option value="DragonBall">Dragon Ball</option>
+  <option value="Naruto">Naruto</option>
+  <option value="StarWars">Star Wars</option>
+  <option value="Pokemon">Pokemon</option>
+  
+</select>
+<button onclick="start()" id="Start">Start</button>
+
+</div>
+    <p id="Title" style="margin-top:0px;position: absolute; left: 40%; top: 0%; color: white; font-size: 200%; text-align: center;">Nerdle</p>
+    <div id="MainBody">
+        
+    </div>
+    <div class="hidden" id="thing" style="width: 1200px">
+        <div id="keyboard">
+            <div class="row_one">
+                <button onclick="typer('q')" id="q">Q</button>
+                <button onclick="typer('w')" id="w">W</button>
+                <button onclick="typer('e')" id="e">E</button>
+                <button onclick="typer('r')" id="r">R</button>
+                <button onclick="typer('t')" id="t">T</button>
+                <button onclick="typer('y')" id="y">Y</button>
+                <button onclick="typer('u')" id="u">U</button>
+                <button onclick="typer('i')" id="i">I</button>
+                <button onclick="typer('o')" id="o">O</button>
+                <button onclick="typer('p')" id="p">P</button>
+            </div>
+    
+    
+            <div class="row_two">
+                <button onclick="typer('a')" id="a">A</button>
+                <button onclick="typer('s')" id="s">S</button>
+                <button onclick="typer('d')" id="d">D</button>
+                <button onclick="typer('f')" id="f">F</button>
+                <button onclick="typer('g')" id="g">G</button>
+                <button onclick="typer('h')" id="h">H</button>
+                <button onclick="typer('j')" id="j">J</button>
+                <button onclick="typer('k')" id="k">K</button>
+                <button onclick="typer('l')" id="l">L</button>
+            </div>
+    
+            
+        </div>
+        <div class="row_three">
+            <button onclick="enter()" style="width: auto;">Enter</button>
+            <button onclick="typer('z')" id="z">Z</button>
+            <button onclick="typer('x')" id="x">X</button>
+            <button onclick="typer('c')" id="c">C</button>
+            <button onclick="typer('v')" id="v">V</button>
+            <button onclick="typer('b')" id="b">B</button>
+            <button onclick="typer('n')" id="n">N</button>
+            <button onclick="typer('m')" id="m">M</button>
+            <button onclick="back()"  style="width: auto;">Backspace</button>
+        </div>
+    </div>
+    
+
+<script>
+
+    let possibleletter = [];
+    
+    let counterwin = 0;
+    let score = document.cookie;
+    
+    function popup(){
+        
+        document.getElementById("popup").style.display = 'block';
+        document.getElementById("popup2").style.display = 'block';
+        document.getElementById("endword").innerHTML = answer;
+        
+        score = (count/(answer.length)+',');
+        document.cookie += score;
+        document.cookie[0] = '';
+        document.cookie[0] = '';
+        document.cookie[0] = '';
+        document.cookie[0] = '';
+        document.cookie[0] = '';
+        document.cookie[0] = '';
+        document.getElementById("score").innerHTML = document.cookie;
+        
+        
+    }
+    function restart(){
+        location.reload();
+    }
+    function share(){
+        navigator.clipboard.writeText('I got '+(count/(answer.length))+' on the word '+answer+'!'+' And my overall score is '+score);
+        document.getElementById("alert").style.display = 'block';
+        var intervalId = window.setInterval(function(){
+            document.getElementById("alert").style.display = 'none';
+
+}, 1000);
+
+    }
+    
+function typer(parse){
+    thischar = document.getElementById(char);
+    
+    if(word.length<(answer.length)){
+        word.push(parse)
+        wordg.push(parse)
+        thischar.innerHTML = parse;
+        char++;
+    }
+    
+}
+    list = []
+let answer = '';
+//Picking sets
+function start(){
+let pick = document.getElementById("pick");
+let StarWarsList = document.getElementById("StarWarsList");
+let NarutoList = document.getElementById("NarutoList");
+let MarvelList = document.getElementById("MarvelList");
+let PokemonList = document.getElementById("PokemonList");
+let DragonBallList = document.getElementById("DragonBallList");
+let RegularList = document.getElementById("RegularList");
+var list = document.getElementById("list");
+if(pick.value == 'StarWars'){
+    for(let i = 0; i<StarWarsList.innerHTML.length;i++){
+        list.innerHTML += StarWarsList.innerHTML[i];
+    }
+    
+}
+if(pick.value == 'Naruto'){
+    for(let i = 0; i<NarutoList.innerHTML.length;i++){
+        list.innerHTML += NarutoList.innerHTML[i];
+    }
+    
+}
+if(pick.value == 'Marvel'){
+    for(let i = 0; i<MarvelList.innerHTML.length;i++){
+        list.innerHTML += MarvelList.innerHTML[i];
+    }
+    
+}
+if(pick.value == 'Pokemon'){
+    for(let i = 0; i<PokemonList.innerHTML.length;i++){
+        list.innerHTML += PokemonList.innerHTML[i];
+    }
+    
+}
+if(pick.value == 'DragonBall'){
+    for(let i = 0; i<DragonBallList.innerHTML.length;i++){
+        list.innerHTML += DragonBallList.innerHTML[i];
+    }
+    
+}
+if(pick.value == 'Regular'){
+    for(let i = 0; i<RegularList.innerHTML.length;i++){
+        list.innerHTML += RegularList.innerHTML[i];
+    }
+    
+}
+
+document.getElementById("pregame").style.display = 'none';
+for(let j = 0; j<list.innerHTML.length;j++){
+    if(list.innerHTML[j] == ' '){
+        list.innerHTML[j]
+    }
+}
+document.getElementById("thing").className = 'shown';
+
+listass();
+}
+
+
+
+
+    var listt = document.getElementById("list");
+    let worddd = '';
+    let counterrr = 0
+    function listass(){
+        var listt = document.getElementById("list");
+        for(let p = 0; p<listt.innerHTML.length; p++){
+        if(listt.innerHTML[p]==','){
+            list.push(worddd);
+            worddd = '';
+            counterrr = 0;
+        }
+        if(listt.innerHTML[p] != '' && listt.innerHTML[p] != ("\n") && listt.innerHTML[p] != ',' && listt.innerHTML[p] != ' '){
+            worddd += listt.innerHTML[p];
+            counterrr++;
+        }
+    }
+    answer = list[Math.floor(Math.random()*list.length)].toLowerCase();
+    
+    instant();
+    }
+    
+    count = 0
+    let char = 0
+    let flag = false;
+    let word = []
+    let wordg = []
+    
+    function instant(){
+        counter = 0
+        doc = document.getElementById("MainBody");
+        keyboard = document.getElementById("thing");
+        
+        
+        
+        doc.style.transform = 'translateX('+(answer.length)*(-3.5)+'vh)';
+        for(let i = 0; i< 6;i++){
+            for(let j = 0; j<answer.length;j++){
+                var box = document.createElement("div");
+                box.id = counter;
+                box.style.position = 'inherit';
+                box.style.left = 7*j+'vh';
+                box.style.top = 7*i + 'vh';
+                
+
+                box.style.border = 'solid';
+                box.style.borderColor = 'grey';
+                box.style.width = '7vh';
+                box.style.height = '7vh';
+                doc.appendChild(box);
+                counter++;
+            }
+        }
+    }
+    document.addEventListener('keydown', function(event) {
+    thischar = document.getElementById(char);
+    if(event.key.length == 1 && word.length<(answer.length)){
+        word.push(event.key.toLowerCase());
+        wordg.push(event.key.toLowerCase());
+        thischar.innerHTML = (event.key).toLowerCase();
+        char++;
+    }
+    
+    
+    var list = document.getElementById("list").innerHTML;
+    if(event.key == 'Enter' && word.length == (answer.length)){
+        
+        enter()
+        if(count == (answer.length)*6){
+            popup();
+        }
+        
+        
+    }
+
+    if(event.key == 'Backspace' && word.length > 0){
+        back()
+    }
+    
+    
+});
+
+function back(){
+    if(word.length > 0){
+        char--;
+        thischar = document.getElementById(char);
+        word.pop()
+        wordg.pop()
+        thischar.innerHTML = '';
+    }
+    
+}
+function shake(){
+        for(let i = count; i<count+answer.length;i++){
+            
+            
+            var myTimeout = setTimeout(function int(){
+                doc = document.getElementById(i.toString());
+                doc.className = 'shake';
+                
+            }, 200);
+            for(let j = count; j<count+answer.length;j++){
+                doc = document.getElementById(j.toString());
+                doc.className = '';
+            }
+            
+            
+        }
+        
+    }
+function enter(){
+    
+    var list = document.getElementById("list").innerHTML;
+    
+    if(list.toLowerCase().includes(word.join(''))){
+        
+    }
+    else{
+        shake();
+    }
+    if(word.length == (answer.length) && list.toLowerCase().includes(word.join(''))){
+        check();
+        word = [];
+        wordg = [];
+        count+=(answer.length);
+    }
+    
+    if(count == (answer.length)*6){
+            popup();
+    }
+        
+}
+    
+    
+        function check(){
+            PosAns(word.join(''));
+        let ans = '';
+        jcount = 0
+        let counterwin = 0;
+        let temp = '';
+        for(let i = 0; i<(answer.length); i++){
+            
+            
+            keyletgrey = document.getElementById(word[i]);
+            keyletgrey.className = 'grey';
+            if(answer.includes(word[i])){
+                for(let j = count+i; j<count+(answer.length);j++){
+                    jcount++;
+                    letter = document.getElementById(j);
+                    keylet = document.getElementById(word[i]);
+                    if(letter.innerHTML == word[i] && word[i] != temp){
+                        letter.className = 'yellow';
+                        keylet.className = 'yellow';
+                        temp = word[i];
+                        word[i] = '';
+                        
+                        break
+                        
+                        
+                    }
+                    
+                }
+                
+                
+            }
+            
+                if(wordg[i] == answer[i]){
+                    
+                    for(let k = count+i; k< count+(answer.length);k++){
+                        if(counterwin == answer.length-1){
+                            count+=(answer.length);
+                            popup();
+                        }
+                        letterr = document.getElementById(k);
+                        keylett = document.getElementById(wordg[i]);
+                        if(wordg[i] == letterr.innerHTML){
+                            possibleletter.push(wordg[i]);
+                            //console.log(possibleletter);
+                            counterwin++;
+                            letterr.className = 'green';
+                            keylett.className = 'green';
+                            word[i] = ''
+                            wordg[i] = ''
+                            break
+                        }
+                        
+                        
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        
+
+function PosAns(parsedword){
+    var posans;
+    
+    for(let i = 0; i<parsedword.length;i++){
+        for(let j = 0; j<list.length;j++){
+            if(parsedword[i] == list[j][i] && possibleletter.includes(parsedword[i])){
+                console.log(list[j]);
+                posans += list[j];
+            }
+        }
+        
+    }
+    fill = document.getElementById("answers").innerHTML;
+    document.getElementById("answers").innerHTML = posans;
+    console.log(possibleletter);
+}
+</script>
+</body> </html>
